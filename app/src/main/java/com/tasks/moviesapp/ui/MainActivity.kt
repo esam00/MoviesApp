@@ -1,4 +1,4 @@
-package com.tasks.moviesapp.presentation
+package com.tasks.moviesapp.ui
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
