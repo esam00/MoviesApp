@@ -8,7 +8,9 @@
     <color name="colorAccent">#F97C3E</color>
     <color name="colorAccentTransparent">#56447EFB</color>
 
-    <color name="primaryTextColor">#FFFFFFFF</color>
-    <color name="SecondaryTextColor">#4DFFFFFF</color>
+    <color name="colorTextPrimary">#FFFFFFFF</color>
+    <color name="colorTextSecondary">#4DFFFFFF</color>
+
+    <color name="colorPosterPlaceholder">#242424</color>
 
 </resources>

@@ -16,11 +16,22 @@ android {
         targetSdk 35
         versionCode 1
         versionName "1.0"
-
+        android.buildFeatures.buildConfig true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    def localProperties = new Properties()
+    def localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        localProperties.load(new FileInputStream(localPropertiesFile))
+    }
+
     buildTypes {
+        debug {
+            def apiKey = localProperties.getProperty("API_KEY") ?: ""
+            buildConfigField "String", "API_KEY", "${apiKey}"
+        }
+
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
