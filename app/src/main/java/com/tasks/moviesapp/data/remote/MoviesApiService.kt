@@ -1,7 +1,7 @@
 package com.tasks.moviesapp.data.remote
 
 import com.tasks.moviesapp.BuildConfig
-import com.tasks.moviesapp.domain.model.MovieListResponse
+import com.tasks.moviesapp.data.remote.response.MovieListResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query

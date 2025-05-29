@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.tasks.moviesapp.data.remote.MoviesApiService
+import com.tasks.moviesapp.data.remote.mapper.toMovieEntity
 import com.tasks.moviesapp.domain.model.MovieEntity
 import retrofit2.HttpException
 import java.io.IOException
@@ -37,7 +38,7 @@ class MoviesPagingSource(private val apiServices: MoviesApiService) :
             }
 
             LoadResult.Page(
-                data = response.body()?.results ?: emptyList(),
+                data = response.body()?.results?.map { it.toMovieEntity() } ?: emptyList(),
                 prevKey = if (page == STARTING_PAGE_INDEX) null else page - 1,
                 nextKey = if (hasMorePages) page + 1 else null
             )
