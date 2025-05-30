@@ -13,9 +13,11 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.tasks.moviesapp.R
 import com.tasks.moviesapp.core.Status
 import com.tasks.moviesapp.core.getImageUri
 import com.tasks.moviesapp.databinding.FragmentMovieDetailsBinding
+import com.tasks.moviesapp.domain.formatMinutes
 import com.tasks.moviesapp.domain.model.MovieEntity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -54,6 +56,7 @@ class MovieDetailsFragment : Fragment() {
                     }
 
                     Status.ERROR -> {
+                        binding.progressBar.visibility = View.GONE
                         Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
                     }
                 }
@@ -62,6 +65,13 @@ class MovieDetailsFragment : Fragment() {
     }
 
     private fun bindMovieDetails(movie: MovieEntity) = with(binding) {
+        tvMovieTitle.text = movie.title
+        tvOverview.text = movie.overview
+        tvReleaseDate.text = movie.releaseDate
+        movie.runtime?.let {
+            tvRunTime.text = formatMinutes(it)
+        }
+        ivFavorite.setImageResource(if (movie.isFavorite) R.drawable.ic_remove_favorite else R.drawable.ic_add_favorite)
         Glide.with(requireContext()).load(movie.getImageUri())
             .transition(DrawableTransitionOptions.withCrossFade())
             .into(ivMoviePoster)

@@ -16,6 +16,81 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@drawable/bg_gradient_poster_overlay"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_movie_poster"
+        app:layout_constraintTop_toTopOf="@+id/iv_movie_poster" />
+
+    <TextView
+        android:id="@+id/tv_movie_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:fontFamily="@font/inter_medium"
+        android:padding="16dp"
+        android:textColor="@color/white"
+        android:textSize="26sp"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_movie_poster"
+        app:layout_constraintEnd_toStartOf="@+id/iv_favorite"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="Movie Title" />
+
+    <TextView
+        android:id="@+id/tv_release_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:fontFamily="@font/inter_regular"
+        android:textColor="@color/colorTextSecondary"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_movie_title"
+        tools:text="20 / 4 / 2025" />
+
+    <TextView
+        android:id="@+id/tv_run_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:fontFamily="@font/inter_regular"
+        android:gravity="center"
+        android:textColor="@color/colorTextSecondary"
+        android:textSize="14sp"
+        app:layout_constraintStart_toEndOf="@+id/tv_release_date"
+        app:layout_constraintTop_toBottomOf="@+id/tv_movie_title"
+        tools:text="1 hr 49 min" />
+
+    <ImageView
+        android:id="@+id/iv_favorite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:contentDescription="@string/add_to_favorite"
+        android:src="@drawable/ic_add_favorite"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_movie_poster"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_overview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:fontFamily="@font/inter_regular"
+        android:textColor="@color/colorTextSecondary"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_release_date"
+        tools:text="The wildly funny and touching story of a lonely Hawaiian girl and the fugitive alien who helps to mend her broken family." />
+
     <ProgressBar
         android:id="@+id/progress_bar"
         android:layout_width="wrap_content"
