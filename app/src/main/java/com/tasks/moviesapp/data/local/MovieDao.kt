@@ -20,7 +20,7 @@ interface MovieDao {
     suspend fun updateFavoriteStatus(movieId: Int, isFavorite: Boolean)
 
     @Query("SELECT * FROM movies WHERE isFavorite = 1 ORDER BY originalIndex ASC")
-    fun getFavoriteMovies(): Flow<List<MovieEntity>>
+    suspend fun getFavoriteMovies(): List<MovieEntity>
 
     @Query("SELECT * FROM movies WHERE id = :movieId")
     suspend fun getMovieById(movieId: Int): MovieEntity?

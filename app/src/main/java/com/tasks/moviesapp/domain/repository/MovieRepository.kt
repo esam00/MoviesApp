@@ -9,6 +9,4 @@ interface MovieRepository {
 
     suspend fun updateFavoriteStatus(movieId: Int, isFavorite: Boolean)
 
-    suspend fun getFavoriteMovies(): Flow<List<MovieEntity>>
-
 }

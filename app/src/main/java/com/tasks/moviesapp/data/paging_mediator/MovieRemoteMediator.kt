@@ -47,6 +47,7 @@ class MovieRemoteMediator(
 
             // Calculate next page
             val nextPage = if (movieEntities.isEmpty()) null else page + 1
+
             val remoteKeys = movieEntities.map { movie ->
                 RemoteKey(movieId = movie.id, nextPage = nextPage)
             }
@@ -59,12 +60,21 @@ class MovieRemoteMediator(
 
             database.withTransaction {
                 if (loadType == LoadType.REFRESH) {
+                    val favoriteMovies = movieDao.getFavoriteMovies()
+
                     movieDao.clearAllMovies()
                     remoteKeysDao.clearRemoteKeys()
-                }
 
-                // Insert movies into database
-                movieDao.insertMovies(orderedMovies)
+                    val updatedMovies = orderedMovies.map { movie ->
+                        val isFavorite = favoriteMovies.any { it.id == movie.id }
+                        movie.copy(isFavorite = isFavorite)
+                    }
+
+                    movieDao.insertMovies(updatedMovies)
+                } else {
+                    // Insert movies into database
+                    movieDao.insertMovies(orderedMovies)
+                }
 
                 // Insert remote keys into database
                 remoteKeysDao.insertAll(remoteKeys)

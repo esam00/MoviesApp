@@ -35,9 +35,4 @@ class MovieRepositoryImp @Inject constructor(
         database.movieDao().updateFavoriteStatus(movieId, isFavorite)
     }
 
-    override suspend fun getFavoriteMovies(): Flow<List<MovieEntity>> {
-        return database.movieDao().getFavoriteMovies()
-    }
-
-
 }
