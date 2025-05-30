@@ -42,9 +42,11 @@ class MoviesListFragment : Fragment() {
     }
 
     private fun initPlantsAdapter() = with(binding) {
-        moviesAdapter = MoviesLoadStateAdapter(onItemClicked = {
-            findNavController().navigate(R.id.movieDetailsFragment)
-        })
+        moviesAdapter = MoviesLoadStateAdapter(
+            onItemClicked = { findNavController().navigate(R.id.movieDetailsFragment) },
+            onFavoriteClicked = { movieId, isFavorite ->
+                viewModel.toggleFavorite(movieId, isFavorite)
+            })
 
         rvMovies.apply {
             adapter = moviesAdapter
@@ -52,7 +54,8 @@ class MoviesListFragment : Fragment() {
         }
 
         moviesAdapter.addLoadStateListener { loadState ->
-            progressBar.isVisible = loadState.source.refresh is LoadState.Loading && moviesAdapter.itemCount == 0
+            progressBar.isVisible =
+                loadState.source.refresh is LoadState.Loading && moviesAdapter.itemCount == 0
 
             handleError(loadState)
         }

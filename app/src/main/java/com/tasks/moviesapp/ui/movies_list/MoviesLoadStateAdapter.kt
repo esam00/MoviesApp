@@ -14,7 +14,8 @@ import com.tasks.moviesapp.databinding.ItemMovieBinding
 import com.tasks.moviesapp.domain.model.MovieEntity
 
 class MoviesLoadStateAdapter(
-    private val onItemClicked: (MovieEntity) -> Unit
+    private val onItemClicked: (MovieEntity) -> Unit,
+    private val onFavoriteClicked: (Int, Boolean) -> Unit
 ) : PagingDataAdapter<MovieEntity, MoviesLoadStateAdapter.ViewHolder>(REPO_COMPARATOR) {
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -26,10 +27,20 @@ class MoviesLoadStateAdapter(
                     onItemClicked(it)
                 }
             }
+
+            binding.ivFavorite.setOnClickListener {
+                getItem(bindingAdapterPosition)?.let {
+                    onFavoriteClicked(it.id, !it.isFavorite)
+                }
+            }
         }
 
         fun bind(item: MovieEntity) = with(binding) {
             tvMovieTitle.text = item.title
+            tvReleaseDate.text = item.releaseDate
+
+            ivFavorite.setImageResource(if (item.isFavorite) R.drawable.ic_remove_favorite else R.drawable.ic_add_favorite)
+
             Glide.with(itemView.context).load(item.getImageUri())
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(ivMoviePoster)

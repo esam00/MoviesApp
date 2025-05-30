@@ -14,7 +14,8 @@ data class MovieEntity(
     val homepage: String?,
     val runtime: Int?,
     val status: String?,
-    val originalIndex: Int = 0
+    val originalIndex: Int = 0,
+    val isFavorite: Boolean = false
 )
 
 

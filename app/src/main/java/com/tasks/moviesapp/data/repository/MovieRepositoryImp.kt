@@ -17,6 +17,7 @@ class MovieRepositoryImp @Inject constructor(
     private val apiService: MoviesApiService,
     private val database: MovieDatabase
 ) : MovieRepository {
+
     override fun getAllMovies(): Flow<PagingData<MovieEntity>> {
         return Pager(
             config = PagingConfig(
@@ -29,4 +30,14 @@ class MovieRepositoryImp @Inject constructor(
             pagingSourceFactory = { database.movieDao().pagingSource() }
         ).flow
     }
+
+    override suspend fun updateFavoriteStatus(movieId: Int, isFavorite: Boolean) {
+        database.movieDao().updateFavoriteStatus(movieId, isFavorite)
+    }
+
+    override suspend fun getFavoriteMovies(): Flow<List<MovieEntity>> {
+        return database.movieDao().getFavoriteMovies()
+    }
+
+
 }

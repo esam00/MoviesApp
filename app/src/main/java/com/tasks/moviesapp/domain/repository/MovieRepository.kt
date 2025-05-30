@@ -6,4 +6,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface MovieRepository {
     fun getAllMovies(): Flow<PagingData<MovieEntity>>
+
+    suspend fun updateFavoriteStatus(movieId: Int, isFavorite: Boolean)
+
+    suspend fun getFavoriteMovies(): Flow<List<MovieEntity>>
+
 }
