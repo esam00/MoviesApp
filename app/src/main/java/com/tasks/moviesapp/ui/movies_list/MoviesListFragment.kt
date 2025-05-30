@@ -8,7 +8,9 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
@@ -50,8 +52,7 @@ class MoviesListFragment : Fragment() {
         }
 
         moviesAdapter.addLoadStateListener { loadState ->
-            progressBar.isVisible = loadState.source.refresh is LoadState.Loading
-            rvMovies.isVisible = loadState.source.refresh is LoadState.NotLoading
+            progressBar.isVisible = loadState.source.refresh is LoadState.Loading && moviesAdapter.itemCount == 0
 
             handleError(loadState)
         }
@@ -68,9 +69,10 @@ class MoviesListFragment : Fragment() {
     }
 
     private fun getMoviesList() = lifecycleScope.launch {
-        viewModel.moviesList.collectLatest {
-            moviesAdapter.submitData(it)
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.moviesList.collectLatest {
+                moviesAdapter.submitData(it)
+            }
         }
     }
-
 }
