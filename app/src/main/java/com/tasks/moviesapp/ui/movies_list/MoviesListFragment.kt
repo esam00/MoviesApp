@@ -43,7 +43,9 @@ class MoviesListFragment : Fragment() {
 
     private fun initPlantsAdapter() = with(binding) {
         moviesAdapter = MoviesLoadStateAdapter(
-            onItemClicked = { findNavController().navigate(R.id.movieDetailsFragment) },
+            onItemClicked = {
+                findNavController().navigate(MoviesListFragmentDirections.actionMoviesListFragmentToMovieDetailsFragment(it.id))
+            },
             onFavoriteClicked = { movieId, isFavorite ->
                 viewModel.toggleFavorite(movieId, isFavorite)
             })

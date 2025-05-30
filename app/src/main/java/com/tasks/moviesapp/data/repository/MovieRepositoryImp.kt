@@ -7,9 +7,12 @@ import androidx.paging.PagingData
 import com.tasks.moviesapp.data.local.MovieDatabase
 import com.tasks.moviesapp.data.paging_mediator.MovieRemoteMediator
 import com.tasks.moviesapp.data.remote.MoviesApiService
+import com.tasks.moviesapp.data.remote.mapper.toMovieEntity
+import com.tasks.moviesapp.core.Resource
 import com.tasks.moviesapp.domain.model.MovieEntity
 import com.tasks.moviesapp.domain.repository.MovieRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 @OptIn(ExperimentalPagingApi::class)
@@ -33,6 +36,23 @@ class MovieRepositoryImp @Inject constructor(
 
     override suspend fun updateFavoriteStatus(movieId: Int, isFavorite: Boolean) {
         database.movieDao().updateFavoriteStatus(movieId, isFavorite)
+    }
+
+    override suspend fun getMovieById(movieId: Int): Flow<Resource<MovieEntity>> = flow {
+        emit(Resource.loading())
+        try {
+            val response = apiService.getMovieById(movieId)
+            if (response.isSuccessful) {
+                response.body()?.let {
+                    emit(Resource.success(it.toMovieEntity()))
+                }
+            } else {
+                emit(Resource.error(response.message()))
+            }
+
+        } catch (e: Exception) {
+            emit(Resource.error(e.message.toString()))
+        }
     }
 
 }

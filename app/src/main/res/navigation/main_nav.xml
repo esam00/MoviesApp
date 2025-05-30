@@ -8,7 +8,7 @@
         android:id="@+id/moviesListFragment"
         android:name="com.tasks.moviesapp.ui.movies_list.MoviesListFragment"
         android:label="fragment_movie_details"
-        tools:layout="@layout/fragment_movie_details" >
+        tools:layout="@layout/fragment_movies_list" >
         <action
             android:id="@+id/action_moviesListFragment_to_movieDetailsFragment"
             app:destination="@id/movieDetailsFragment" />
@@ -17,5 +17,9 @@
         android:id="@+id/movieDetailsFragment"
         android:name="com.tasks.moviesapp.ui.movie_details.MovieDetailsFragment"
         android:label="fragment_movie_details"
-        tools:layout="@layout/fragment_movie_details" />
+        tools:layout="@layout/fragment_movie_details" >
+        <argument
+            android:name="movieId"
+            app:argType="integer" />
+    </fragment>
 </navigation>
