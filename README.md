@@ -7,18 +7,18 @@ A modern Android application that displays a list of movies fetched from [TMDb A
 
 ## ✨ Features
 
-### 🏠 Home Screen
+### Home Screen
 - Displays a list of movies with **poster**, **title**, and **release date**.
 - Toggle between **vertical list** and **grid layout**.
 - Supports **pagination** using **Paging 3**.
 - Reflects favorite state synced with local storage.
 
-### ⭐ Favorite Functionality
+### Favorite Functionality
 - Users can **mark/unmark** a movie as a favorite.
 - Favorites are stored locally using **Room**.
 - Favorite status is shown directly in the home list.
 
-### 🎥 Details Screen
+### Details Screen
 - Clicking a movie navigates to a **details screen**.
 - Displays:
     - Overview
