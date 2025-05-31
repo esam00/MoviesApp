@@ -1,4 +1,4 @@
-package com.tasks.moviesapp.ui.movie_details
+package com.tasks.moviesapp.presentation.movie_details
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

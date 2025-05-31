@@ -6,7 +6,7 @@
     app:startDestination="@id/moviesListFragment">
     <fragment
         android:id="@+id/moviesListFragment"
-        android:name="com.tasks.moviesapp.ui.movies_list.MoviesListFragment"
+        android:name="com.tasks.moviesapp.presentation.movies_list.HomeFragment"
         android:label="fragment_movie_details"
         tools:layout="@layout/fragment_movies_list" >
         <action
@@ -15,7 +15,7 @@
     </fragment>
     <fragment
         android:id="@+id/movieDetailsFragment"
-        android:name="com.tasks.moviesapp.ui.movie_details.MovieDetailsFragment"
+        android:name="com.tasks.moviesapp.presentation.movie_details.MovieDetailsFragment"
         android:label="fragment_movie_details"
         tools:layout="@layout/fragment_movie_details" >
         <argument

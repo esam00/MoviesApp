@@ -1,4 +1,4 @@
-package com.tasks.moviesapp.ui.movie_details
+package com.tasks.moviesapp.presentation.movie_details
 
 import androidx.lifecycle.ViewModel
 import com.tasks.moviesapp.domain.repository.MovieRepository
