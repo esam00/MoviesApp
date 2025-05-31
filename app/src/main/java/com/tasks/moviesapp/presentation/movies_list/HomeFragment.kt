@@ -75,6 +75,12 @@ class HomeFragment : Fragment() {
         moviesAdapter.addLoadStateListener { loadState ->
             viewModel.handleLoadStates(loadState, moviesAdapter.itemCount)
         }
+
+        lifecycleScope.launch {
+            viewModel.loadMovies().collectLatest {
+                moviesAdapter.submitData(it)
+            }
+        }
     }
 
     private fun observeUiStates() = lifecycleScope.launch {
@@ -91,8 +97,6 @@ class HomeFragment : Fragment() {
 
                 is HomeUiStates.Success -> {
                     binding.progressBar.isVisible = false
-                    moviesAdapter.submitData(uiStates.movies)
-
                 }
 
                 is HomeUiStates.Error -> {
