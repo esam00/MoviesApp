@@ -23,6 +23,19 @@
         app:layout_constraintBottom_toBottomOf="@+id/iv_movie_poster"
         app:layout_constraintTop_toTopOf="@+id/iv_movie_poster" />
 
+    <ImageView
+        android:id="@+id/iv_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:padding="8dp"
+        android:background="@drawable/bg_ripple_effect"
+        android:contentDescription="@string/back"
+        android:src="@drawable/ic_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/tv_movie_title"
         android:layout_width="0dp"
@@ -43,8 +56,8 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:gravity="center"
         android:fontFamily="@font/inter_regular"
+        android:gravity="center"
         android:textColor="@color/colorTextSecondary"
         android:textSize="14sp"
         app:layout_constraintStart_toStartOf="parent"

@@ -12,5 +12,6 @@
     <color name="colorTextSecondary">#99FFFFFF</color>
 
     <color name="colorPosterPlaceholder">#242424</color>
+    <color name="colorIconBackground">#1E1E1E</color>
 
 </resources>

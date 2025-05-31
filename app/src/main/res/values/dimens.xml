@@ -4,4 +4,7 @@
 
     <dimen name="movie_image_width">160dp</dimen>
     <dimen name="movie_image_height">240dp</dimen>
+
+    <dimen name="movie_image_width_list">187dp</dimen>
+    <dimen name="movie_image_height_list">280dp</dimen>
 </resources>

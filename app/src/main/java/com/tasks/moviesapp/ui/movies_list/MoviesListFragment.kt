@@ -15,6 +15,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.paging.CombinedLoadStates
 import androidx.paging.LoadState
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.tasks.moviesapp.R
 import com.tasks.moviesapp.databinding.FragmentMoviesListBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,6 +31,8 @@ class MoviesListFragment : Fragment() {
 
     private lateinit var moviesAdapter: MoviesLoadStateAdapter
 
+    private var previewType = PreviewType.GRID
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -38,13 +41,19 @@ class MoviesListFragment : Fragment() {
         binding = FragmentMoviesListBinding.inflate(layoutInflater, container, false)
         initPlantsAdapter()
         getMoviesList()
+        setupPreviewType()
         return binding.root
     }
 
     private fun initPlantsAdapter() = with(binding) {
         moviesAdapter = MoviesLoadStateAdapter(
+            previewType = previewType,
             onItemClicked = {
-                findNavController().navigate(MoviesListFragmentDirections.actionMoviesListFragmentToMovieDetailsFragment(it.id))
+                findNavController().navigate(
+                    MoviesListFragmentDirections.actionMoviesListFragmentToMovieDetailsFragment(
+                        it.id
+                    )
+                )
             },
             onFavoriteClicked = { movieId, isFavorite ->
                 viewModel.toggleFavorite(movieId, isFavorite)
@@ -52,7 +61,10 @@ class MoviesListFragment : Fragment() {
 
         rvMovies.apply {
             adapter = moviesAdapter
-            layoutManager = GridLayoutManager(requireContext(), 2)
+            layoutManager = if (previewType == PreviewType.GRID) GridLayoutManager(
+                requireContext(),
+                2
+            ) else LinearLayoutManager(requireContext())
         }
 
         moviesAdapter.addLoadStateListener { loadState ->
@@ -79,5 +91,21 @@ class MoviesListFragment : Fragment() {
                 moviesAdapter.submitData(it)
             }
         }
+    }
+
+    private fun setupPreviewType() = with(binding) {
+        icPreviewController.setOnClickListener {
+            if (previewType == PreviewType.GRID) {
+                previewType = PreviewType.LIST
+                icPreviewController.setImageResource(R.drawable.ic_list_view)
+            } else {
+                previewType = PreviewType.GRID
+                icPreviewController.setImageResource(R.drawable.ic_grid_view)
+            }
+
+            initPlantsAdapter()
+            getMoviesList()
+        }
+
     }
 }

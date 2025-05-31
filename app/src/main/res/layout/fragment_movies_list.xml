@@ -26,6 +26,19 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <ImageButton
+            android:id="@+id/ic_preview_controller"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/bg_ripple_effect"
+            android:contentDescription="@string/preview_type"
+            android:padding="8dp"
+            android:src="@drawable/ic_list_view"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -41,7 +54,7 @@
         app:layout_constraintTop_toBottomOf="@+id/toolbar_layout"
         app:spanCount="2"
         tools:itemCount="4"
-        tools:listitem="@layout/item_movie" />
+        tools:listitem="@layout/item_movie_grid" />
 
     <ProgressBar
         android:id="@+id/progress_bar"

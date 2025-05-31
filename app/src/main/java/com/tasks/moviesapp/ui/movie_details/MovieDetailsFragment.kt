@@ -10,6 +10,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
@@ -36,6 +37,11 @@ class MovieDetailsFragment : Fragment() {
     ): View {
         // Inflate the layout for this fragment
         binding = FragmentMovieDetailsBinding.inflate(layoutInflater, container, false)
+
+        binding.ivBack.setOnClickListener {
+            findNavController().navigateUp()
+        }
+
         getMovieById(args.movieId)
         return binding.root
     }
