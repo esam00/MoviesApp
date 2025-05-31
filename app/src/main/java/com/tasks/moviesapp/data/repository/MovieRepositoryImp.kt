@@ -41,10 +41,19 @@ class MovieRepositoryImp @Inject constructor(
     override suspend fun getMovieById(movieId: Int): Flow<Resource<MovieEntity>> = flow {
         emit(Resource.loading())
         try {
+            // emit cached version of the movie
+            val cachedMovie = database.movieDao().getMovieById(movieId)?.also {
+                emit(Resource.success(it))
+            }
+
+            // load movie from api to get more info
             val response = apiService.getMovieById(movieId)
             if (response.isSuccessful) {
                 response.body()?.let {
-                    emit(Resource.success(it.toMovieEntity()))
+                    //update favorite state
+                    val movie =
+                        it.toMovieEntity().copy(isFavorite = cachedMovie?.isFavorite ?: false)
+                    emit(Resource.success(movie))
                 }
             } else {
                 emit(Resource.error(response.message()))

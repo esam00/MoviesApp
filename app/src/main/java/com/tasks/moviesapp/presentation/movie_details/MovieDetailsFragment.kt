@@ -30,6 +30,8 @@ class MovieDetailsFragment : Fragment() {
 
     private val viewModel: MovieDetailsViewModel by viewModels()
 
+    private lateinit var movie: MovieEntity
+
     private val args: MovieDetailsFragmentArgs by navArgs()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,8 +43,8 @@ class MovieDetailsFragment : Fragment() {
         binding.ivBack.setOnClickListener {
             findNavController().navigateUp()
         }
-
         getMovieById(args.movieId)
+        observeFavoriteStatus()
         return binding.root
     }
 
@@ -51,13 +53,14 @@ class MovieDetailsFragment : Fragment() {
             viewModel.getMovieById(id).collect {
                 when (it.status) {
                     Status.LOADING -> {
-
+                        binding.progressBar.visibility = View.VISIBLE
                     }
 
                     Status.SUCCESS -> {
                         binding.progressBar.visibility = View.GONE
-                        it.data?.let { movie ->
-                            bindMovieDetails(movie)
+                        it.data?.let { data ->
+                            movie = data
+                            bindMovieDetails()
                         }
                     }
 
@@ -70,16 +73,32 @@ class MovieDetailsFragment : Fragment() {
         }
     }
 
-    private fun bindMovieDetails(movie: MovieEntity) = with(binding) {
+    private fun bindMovieDetails() = with(binding) {
         tvMovieTitle.text = movie.title
         tvOverview.text = movie.overview
         tvReleaseDate.text = movie.releaseDate
+
         movie.runtime?.let {
             tvRunTime.text = formatMinutes(it)
         }
-        ivFavorite.setImageResource(if (movie.isFavorite) R.drawable.ic_remove_favorite else R.drawable.ic_add_favorite)
+
         Glide.with(requireContext()).load(movie.getImageUri())
             .transition(DrawableTransitionOptions.withCrossFade())
             .into(ivMoviePoster)
+
+        ivFavorite.setImageResource(if (movie.isFavorite) R.drawable.ic_remove_favorite else R.drawable.ic_add_favorite)
+        ivFavorite.setOnClickListener {
+            //toggle favorite status
+            viewModel.updateFavoriteStatus(movie.id, !movie.isFavorite)
+        }
+    }
+
+    private fun observeFavoriteStatus() = lifecycleScope.launch {
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.isFavorite.collect { isFavorite ->
+                movie = movie.copy(isFavorite = isFavorite)
+                binding.ivFavorite.setImageResource(if (isFavorite) R.drawable.ic_remove_favorite else R.drawable.ic_add_favorite)
+            }
+        }
     }
 }
