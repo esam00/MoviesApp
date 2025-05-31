@@ -9,9 +9,10 @@
     <color name="colorAccentTransparent">#56F97C3E</color>
 
     <color name="colorTextPrimary">#FF000000</color>
-    <color name="colorTextSecondary">#5C000000</color>
+    <color name="colorTextSecondary">#C9000000</color>
 
     <color name="colorPosterPlaceholder">#97CFCFCF</color>
-    <color name="colorIconBackground">#D59F9E9E</color>
+    <color name="colorIconBackground">#97CFCFCF</color>
+    <color name="colorIconTint">#FF000000</color>
 
 </resources>

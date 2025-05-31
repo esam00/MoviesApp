@@ -13,5 +13,6 @@
 
     <color name="colorPosterPlaceholder">#242424</color>
     <color name="colorIconBackground">#1E1E1E</color>
+    <color name="colorIconTint">#FFFFFFFF</color>
 
 </resources>

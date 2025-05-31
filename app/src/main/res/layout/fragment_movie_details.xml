@@ -34,7 +34,8 @@
         android:contentDescription="@string/back"
         android:src="@drawable/ic_back"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/colorIconTint" />
 
     <TextView
         android:id="@+id/tv_movie_title"
