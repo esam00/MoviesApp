@@ -23,24 +23,13 @@ class MoviesListViewModel @Inject constructor(
     private val movieRepository: MovieRepository
 ) : ViewModel() {
 
-    init {
-        getMovies()
-    }
-
     private val _uiEvent = Channel<HomeUiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
     private val _uiState = MutableStateFlow<HomeUiStates>(HomeUiStates.Loading)
     val uiState = _uiState.asStateFlow()
 
-    private fun getMovies() {
-        viewModelScope.launch {
-            movieRepository.getAllMovies().cachedIn(viewModelScope)
-                .collectLatest { pagingData ->
-                    _uiState.value = HomeUiStates.Success(pagingData)
-                }
-        }
-    }
+    fun loadMovies() = movieRepository.getAllMovies().cachedIn(viewModelScope)
 
     fun processIntent(intent: HomeIntent) {
         when (intent) {
@@ -68,6 +57,10 @@ class MoviesListViewModel @Inject constructor(
         when {
             loadState.source.refresh is LoadState.Loading && itemCount == 0 -> {
                 _uiState.value = HomeUiStates.Loading
+            }
+
+            loadState.source.refresh is LoadState.NotLoading && itemCount > 0 -> {
+                _uiState.value = HomeUiStates.Success
             }
 
             loadState.source.refresh is LoadState.NotLoading && itemCount == 0 -> {
