@@ -1,4 +1,4 @@
-package com.tasks.moviesapp.core
+package com.tasks.moviesapp.core.utils
 
 import android.net.Uri
 import com.tasks.moviesapp.domain.model.MovieEntity

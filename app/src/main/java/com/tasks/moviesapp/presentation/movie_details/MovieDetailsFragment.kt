@@ -16,9 +16,9 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.tasks.moviesapp.R
 import com.tasks.moviesapp.core.Status
-import com.tasks.moviesapp.core.getImageUri
+import com.tasks.moviesapp.core.utils.getImageUri
 import com.tasks.moviesapp.databinding.FragmentMovieDetailsBinding
-import com.tasks.moviesapp.domain.formatMinutes
+import com.tasks.moviesapp.core.utils.formatMinutes
 import com.tasks.moviesapp.domain.model.MovieEntity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
