@@ -9,7 +9,9 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -30,7 +32,14 @@ class HomeFragment : Fragment() {
 
     private val viewModel: HomeViewModel by viewModels()
 
-    private lateinit var moviesAdapter: MoviesLoadStateAdapter
+    private val moviesAdapter by lazy {
+        MoviesLoadStateAdapter(
+            previewType = previewType,
+            onItemClicked = { viewModel.processIntent(HomeIntent.MovieClicked(it)) },
+            onFavoriteClicked = { movieId, isFavorite ->
+                viewModel.processIntent(HomeIntent.FavoriteToggled(movieId, isFavorite))
+            })
+    }
 
     private var previewType = PreviewType.GRID
 
@@ -45,8 +54,15 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        moviesAdapter.addLoadStateListener { loadState ->
+            viewModel.handleLoadStates(loadState, moviesAdapter.itemCount)
+        }
+
+        binding.rvMovies.adapter = moviesAdapter
+
         setupPreviewType()
-        initMoviesAdapter()
+        setupLayoutManager()
         observeUiStates()
         observeUiEvents()
     }
@@ -57,72 +73,57 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun initMoviesAdapter() = with(binding) {
-        moviesAdapter = MoviesLoadStateAdapter(
-            previewType = previewType,
-            onItemClicked = { viewModel.processIntent(HomeIntent.MovieClicked(it)) },
-            onFavoriteClicked = { movieId, isFavorite ->
-                viewModel.processIntent(HomeIntent.FavoriteToggled(movieId, isFavorite))
-            })
-
-        rvMovies.apply {
-            adapter = moviesAdapter
-            layoutManager = if (previewType == PreviewType.GRID) GridLayoutManager(
-                requireContext(),
-                2
-            ) else LinearLayoutManager(requireContext())
-        }
-
-        moviesAdapter.addLoadStateListener { loadState ->
-            viewModel.handleLoadStates(loadState, moviesAdapter.itemCount)
-        }
-
-        lifecycleScope.launch {
-            viewModel.loadMovies().collectLatest {
-                moviesAdapter.submitData(it)
-            }
-        }
+    private fun setupLayoutManager() = with(binding) {
+        rvMovies.layoutManager = if (previewType == PreviewType.GRID)
+            GridLayoutManager(requireContext(), 2)
+        else LinearLayoutManager(requireContext())
     }
 
     private fun observeUiStates() = lifecycleScope.launch {
-        viewModel.uiState.collectLatest { uiStates ->
-            when (uiStates) {
-                is HomeUiStates.Loading -> {
-                    binding.progressBar.isVisible = true
-                }
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.uiState.collectLatest { uiStates ->
+                when (uiStates) {
+                    is HomeUiStates.Loading -> {
+                        binding.progressBar.isVisible = true
+                    }
 
-                is HomeUiStates.Empty -> {
-                    binding.progressBar.isVisible = false
-                }
+                    is HomeUiStates.Empty -> {
+                        binding.progressBar.isVisible = false
+                    }
 
-                is HomeUiStates.Success -> {
-                    binding.progressBar.isVisible = false
-                }
+                    is HomeUiStates.Success -> {
+                        binding.progressBar.isVisible = false
+                        moviesAdapter.submitData(uiStates.pagingData)
 
-                is HomeUiStates.Error -> {
-                    binding.progressBar.isVisible = false
-                    Log.e("Paging", "observeUiStates: ${uiStates.message}")
-                    Toast.makeText(
-                        requireContext(),
-                        "Failed To get updated movies!",
-                        Toast.LENGTH_LONG
-                    ).show()
+                    }
+
+                    is HomeUiStates.Error -> {
+                        binding.progressBar.isVisible = false
+                        Log.e("Paging", "observeUiStates: ${uiStates.message}")
+                        Toast.makeText(
+                            requireContext(),
+                            "Failed To get updated movies!",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
                 }
             }
         }
     }
 
     private fun observeUiEvents() = lifecycleScope.launch {
-        viewModel.uiEvent.collect { event ->
-            when (event) {
-                is HomeUiEvent.NavigateToDetails -> {
-                    val action =
-                        HomeFragmentDirections.actionMoviesListFragmentToMovieDetailsFragment(event.movieId)
-                    findNavController().navigate(action)
-                }
+        repeatOnLifecycle(Lifecycle.State.STARTED) {
+            viewModel.uiEvent.collect { event ->
+                when (event) {
+                    is HomeUiEvent.NavigateToDetails -> {
+                        val action =
+                            HomeFragmentDirections.actionMoviesListFragmentToMovieDetailsFragment(event.movieId)
+                        findNavController().navigate(action)
+                    }
 
-                HomeUiEvent.ToggleViewType -> {
-                    togglePreviewType()
+                    HomeUiEvent.ToggleViewType -> {
+                        togglePreviewType()
+                    }
                 }
             }
         }
@@ -141,11 +142,7 @@ class HomeFragment : Fragment() {
             }
         )
 
-        rvMovies.layoutManager = if (previewType == PreviewType.GRID) GridLayoutManager(
-            requireContext(),
-            2
-        ) else LinearLayoutManager(requireContext())
-
+        setupLayoutManager()
         moviesAdapter.notifyPreviewTypeChange(previewType)
     }
 }

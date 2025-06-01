@@ -13,6 +13,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -22,13 +23,21 @@ class HomeViewModel @Inject constructor(
     private val movieRepository: MovieRepository
 ) : ViewModel() {
 
+    init {
+        loadMovies()
+    }
+
     private val _uiEvent = Channel<HomeUiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
     private val _uiState = MutableStateFlow<HomeUiStates>(HomeUiStates.Loading)
     val uiState = _uiState.asStateFlow()
 
-    fun loadMovies() = movieRepository.getAllMovies().cachedIn(viewModelScope)
+    private fun loadMovies() = viewModelScope.launch {
+        movieRepository.getAllMovies().cachedIn(viewModelScope).collectLatest {
+            _uiState.value = HomeUiStates.Success(it)
+        }
+    }
 
     fun processIntent(intent: HomeIntent) {
         when (intent) {
@@ -56,10 +65,6 @@ class HomeViewModel @Inject constructor(
         when {
             loadState.source.refresh is LoadState.Loading && itemCount == 0 -> {
                 _uiState.value = HomeUiStates.Loading
-            }
-
-            loadState.source.refresh is LoadState.NotLoading && itemCount > 0 -> {
-                _uiState.value = HomeUiStates.Success
             }
 
             loadState.source.refresh is LoadState.NotLoading && itemCount == 0 -> {
