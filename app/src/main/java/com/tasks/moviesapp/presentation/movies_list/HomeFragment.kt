@@ -1,6 +1,7 @@
 package com.tasks.moviesapp.presentation.movies_list
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -27,7 +28,7 @@ class HomeFragment : Fragment() {
 
     private lateinit var binding: FragmentMoviesListBinding
 
-    private val viewModel: MoviesListViewModel by viewModels()
+    private val viewModel: HomeViewModel by viewModels()
 
     private lateinit var moviesAdapter: MoviesLoadStateAdapter
 
@@ -92,7 +93,6 @@ class HomeFragment : Fragment() {
 
                 is HomeUiStates.Empty -> {
                     binding.progressBar.isVisible = false
-
                 }
 
                 is HomeUiStates.Success -> {
@@ -101,11 +101,15 @@ class HomeFragment : Fragment() {
 
                 is HomeUiStates.Error -> {
                     binding.progressBar.isVisible = false
-                    Toast.makeText(requireContext(), uiStates.message, Toast.LENGTH_LONG).show()
+                    Log.e("Paging", "observeUiStates: ${uiStates.message}")
+                    Toast.makeText(
+                        requireContext(),
+                        "Failed To get updated movies!",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
         }
-
     }
 
     private fun observeUiEvents() = lifecycleScope.launch {

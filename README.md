@@ -3,7 +3,7 @@
 A modern Android application that displays a list of movies fetched from [TMDb API](https://www.themoviedb.org/), built using Kotlin, MVI architecture, and modern Android libraries.
 
 ---
-<img src="screenshots/home_dark_grid.png" width=300> <img src="screenshots/home_dark_list.png" width=300>
+<img src="screenshots/home_dark_grid.png" width=300> <img src="screenshots/home_light_grid.png" width=300>
 
 ## ✨ Features
 

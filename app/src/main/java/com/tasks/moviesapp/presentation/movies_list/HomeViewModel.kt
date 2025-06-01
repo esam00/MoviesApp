@@ -13,13 +13,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MoviesListViewModel @Inject constructor(
+class HomeViewModel @Inject constructor(
     private val movieRepository: MovieRepository
 ) : ViewModel() {
 
@@ -69,7 +68,7 @@ class MoviesListViewModel @Inject constructor(
 
             loadState.source.refresh is LoadState.Error -> {
                 val error = (loadState.source.refresh as LoadState.Error).error
-                _uiState.value = HomeUiStates.Error(error.message ?: "Unknown error")
+                _uiState.value = HomeUiStates.Error(error.message ?: "Failed to Update!")
             }
         }
     }
