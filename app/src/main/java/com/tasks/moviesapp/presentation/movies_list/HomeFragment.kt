@@ -15,7 +15,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.tasks.moviesapp.R
 import com.tasks.moviesapp.data.local.mapper.ViewType
 import com.tasks.moviesapp.databinding.FragmentMoviesListBinding
@@ -48,6 +47,8 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupLoadStateAdapter()
+        setupLoadStateListener()
+        observePagingData()
         observeUiStates()
         observeUiEvents()
         setupPreviewType()
@@ -60,25 +61,23 @@ class HomeFragment : Fragment() {
                 viewModel.processIntent(HomeIntent.FavoriteToggled(movieId, isFavorite))
             })
 
+        rvMovies.adapter = moviesAdapter
+        rvMovies.layoutManager = if (viewModel.viewType == ViewType.Grid)
+        GridLayoutManager(requireContext(), 2)
+        else LinearLayoutManager(requireContext())
+    }
+
+    private fun setupLoadStateListener() {
         moviesAdapter.addLoadStateListener { loadState ->
             viewModel.handleLoadStates(loadState, moviesAdapter.itemCount)
         }
-
-        rvMovies.adapter = moviesAdapter
-        rvMovies.layoutManager = setupLayoutManager()
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.pagingDataFlow.collectLatest {
-                Log.d("HomeFragment", "new page collected: $it")
-                moviesAdapter.submitData(it)
-            }
-        }
     }
 
-    private fun setupLayoutManager(): RecyclerView.LayoutManager {
-        return if (viewModel.viewType == ViewType.Grid)
-            GridLayoutManager(requireContext(), 2)
-        else LinearLayoutManager(requireContext())
+    private fun observePagingData() = viewLifecycleOwner.lifecycleScope.launch {
+        viewModel.pagingDataFlow.collectLatest {
+            Log.d("HomeFragment", "new page collected: $it")
+            moviesAdapter.submitData(it)
+        }
     }
 
     private fun observeUiStates() = viewLifecycleOwner.lifecycleScope.launch {
@@ -127,7 +126,9 @@ class HomeFragment : Fragment() {
                     }
 
                     HomeUiEvent.ToggleViewType -> {
-                        togglePreviewType()
+                        togglePreviewIcon()
+                        moviesAdapter.refresh()
+                        setupLoadStateAdapter()
                     }
                 }
             }
@@ -140,22 +141,13 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun togglePreviewType() = with(binding) {
-        viewModel.viewType = when (viewModel.viewType) {
-            ViewType.List -> ViewType.Grid
-            ViewType.Grid -> ViewType.List
-        }
-
+    private fun togglePreviewIcon() = with(binding) {
         icPreviewController.setImageResource(
             when (viewModel.viewType) {
                 ViewType.List -> R.drawable.ic_grid_view
                 ViewType.Grid -> R.drawable.ic_list_view
             }
         )
-
-        moviesAdapter.refresh()
-        setupLoadStateAdapter()
-
     }
 
 }

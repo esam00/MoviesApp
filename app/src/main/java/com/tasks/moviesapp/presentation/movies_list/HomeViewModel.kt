@@ -53,6 +53,11 @@ class HomeViewModel @Inject constructor(
             }
 
             HomeIntent.ToggleViewType -> {
+                viewType = when (viewType) {
+                    ViewType.List -> ViewType.Grid
+                    ViewType.Grid -> ViewType.List
+                }
+
                 viewModelScope.launch {
                     _uiEvent.send(HomeUiEvent.ToggleViewType)
                 }
