@@ -6,11 +6,11 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
-import com.tasks.moviesapp.data.local.MovieDatabase
-import com.tasks.moviesapp.data.local.remote_key.RemoteKey
+import com.tasks.moviesapp.data.local.database.MovieDatabase
+import com.tasks.moviesapp.data.local.entity.RemoteKey
 import com.tasks.moviesapp.data.remote.MoviesApiService
 import com.tasks.moviesapp.data.remote.mapper.toMovieEntity
-import com.tasks.moviesapp.domain.model.MovieEntity
+import com.tasks.moviesapp.data.local.entity.MovieEntity
 import retrofit2.HttpException
 
 @OptIn(ExperimentalPagingApi::class)

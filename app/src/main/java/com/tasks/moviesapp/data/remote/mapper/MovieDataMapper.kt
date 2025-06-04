@@ -1,7 +1,7 @@
 package com.tasks.moviesapp.data.remote.mapper
 
 import com.tasks.moviesapp.data.remote.response.MovieResponse
-import com.tasks.moviesapp.domain.model.MovieEntity
+import com.tasks.moviesapp.data.local.entity.MovieEntity
 
 fun MovieResponse.toMovieEntity(): MovieEntity {
     return MovieEntity(

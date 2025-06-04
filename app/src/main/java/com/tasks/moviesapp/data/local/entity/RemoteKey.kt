@@ -1,4 +1,4 @@
-package com.tasks.moviesapp.data.local.remote_key
+package com.tasks.moviesapp.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

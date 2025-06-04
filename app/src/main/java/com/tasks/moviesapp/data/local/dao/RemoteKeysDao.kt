@@ -1,9 +1,10 @@
-package com.tasks.moviesapp.data.local.remote_key
+package com.tasks.moviesapp.data.local.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.tasks.moviesapp.data.local.entity.RemoteKey
 
 @Dao
 interface RemoteKeysDao {

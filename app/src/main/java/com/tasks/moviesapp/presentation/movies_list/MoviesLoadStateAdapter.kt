@@ -11,15 +11,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.tasks.moviesapp.R
-import com.tasks.moviesapp.core.utils.getImageUri
-import com.tasks.moviesapp.domain.model.MovieEntity
-import com.tasks.moviesapp.presentation.movies_list.ui_state.PreviewType
+import com.tasks.moviesapp.data.local.mapper.ViewType
+import com.tasks.moviesapp.domain.model.Movie
 
 class MoviesLoadStateAdapter(
-    private var previewType: PreviewType,
     private val onItemClicked: (movieId: Int) -> Unit,
     private val onFavoriteClicked: (Int, Boolean) -> Unit
-) : PagingDataAdapter<MovieEntity, MoviesLoadStateAdapter.ViewHolder>(REPO_COMPARATOR) {
+) : PagingDataAdapter<Movie, MoviesLoadStateAdapter.ViewHolder>(REPO_COMPARATOR) {
 
     inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val movieTitleTextView: TextView = itemView.findViewById(R.id.tv_movie_title)
@@ -41,22 +39,24 @@ class MoviesLoadStateAdapter(
             }
         }
 
-        fun bind(item: MovieEntity){
+        fun bind(item: Movie) {
             movieTitleTextView.text = item.title
             releaseDateTextView.text = item.releaseDate
 
             favoriteImageView.setImageResource(if (item.isFavorite) R.drawable.ic_remove_favorite else R.drawable.ic_add_favorite)
 
-            Glide.with(itemView.context).load(item.getImageUri())
+            Glide.with(itemView.context).load(item.imageUrl)
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(moviePosterImageView)
         }
     }
 
     override fun getItemViewType(position: Int): Int {
-        return when (previewType) {
-            PreviewType.GRID -> R.layout.item_movie_grid
-            PreviewType.LIST -> R.layout.item_movie_list
+        val viewType = getItem(position)?.viewType ?: ViewType.Grid
+
+        return when (viewType) {
+            ViewType.Grid -> R.layout.item_movie_grid
+            ViewType.List -> R.layout.item_movie_list
         }
     }
 
@@ -73,22 +73,17 @@ class MoviesLoadStateAdapter(
         }
     }
 
-    fun notifyPreviewTypeChange(newPreviewType: PreviewType) {
-        previewType = newPreviewType
-        notifyDataSetChanged()
-    }
-
     companion object {
-        private val REPO_COMPARATOR = object : DiffUtil.ItemCallback<MovieEntity>() {
+        private val REPO_COMPARATOR = object : DiffUtil.ItemCallback<Movie>() {
             override fun areItemsTheSame(
-                oldItem: MovieEntity,
-                newItem: MovieEntity
+                oldItem: Movie,
+                newItem: Movie
             ): Boolean =
                 oldItem.id == newItem.id
 
             override fun areContentsTheSame(
-                oldItem: MovieEntity,
-                newItem: MovieEntity
+                oldItem: Movie,
+                newItem: Movie
             ): Boolean =
                 oldItem == newItem
         }

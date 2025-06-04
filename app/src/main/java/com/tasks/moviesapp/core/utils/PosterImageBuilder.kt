@@ -1,7 +1,7 @@
 package com.tasks.moviesapp.core.utils
 
 import android.net.Uri
-import com.tasks.moviesapp.domain.model.MovieEntity
+import com.tasks.moviesapp.data.local.entity.MovieEntity
 /**
  * Builds the full image URL for the movie poster using TMDB's image API.
  * Reference: https://developer.themoviedb.org/docs/image-basics

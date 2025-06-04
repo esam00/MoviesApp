@@ -20,7 +20,7 @@ import com.tasks.moviesapp.core.Status
 import com.tasks.moviesapp.core.utils.getImageUri
 import com.tasks.moviesapp.databinding.FragmentMovieDetailsBinding
 import com.tasks.moviesapp.core.utils.formatMinutes
-import com.tasks.moviesapp.domain.model.MovieEntity
+import com.tasks.moviesapp.data.local.entity.MovieEntity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 

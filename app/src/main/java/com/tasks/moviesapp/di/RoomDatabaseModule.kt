@@ -2,7 +2,7 @@ package com.tasks.moviesapp.di
 
 import android.content.Context
 import androidx.room.Room
-import com.tasks.moviesapp.data.local.MovieDatabase
+import com.tasks.moviesapp.data.local.database.MovieDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -1,12 +1,11 @@
-package com.tasks.moviesapp.data.local
+package com.tasks.moviesapp.data.local.dao
 
 import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.tasks.moviesapp.domain.model.MovieEntity
-import kotlinx.coroutines.flow.Flow
+import com.tasks.moviesapp.data.local.entity.MovieEntity
 
 @Dao
 interface MovieDao {

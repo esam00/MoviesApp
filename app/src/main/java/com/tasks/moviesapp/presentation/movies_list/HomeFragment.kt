@@ -15,12 +15,13 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.tasks.moviesapp.R
+import com.tasks.moviesapp.data.local.mapper.ViewType
 import com.tasks.moviesapp.databinding.FragmentMoviesListBinding
 import com.tasks.moviesapp.presentation.movies_list.ui_state.HomeIntent
 import com.tasks.moviesapp.presentation.movies_list.ui_state.HomeUiEvent
 import com.tasks.moviesapp.presentation.movies_list.ui_state.HomeUiStates
-import com.tasks.moviesapp.presentation.movies_list.ui_state.PreviewType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -32,16 +33,7 @@ class HomeFragment : Fragment() {
 
     private val viewModel: HomeViewModel by viewModels()
 
-    private val moviesAdapter by lazy {
-        MoviesLoadStateAdapter(
-            previewType = previewType,
-            onItemClicked = { viewModel.processIntent(HomeIntent.MovieClicked(it)) },
-            onFavoriteClicked = { movieId, isFavorite ->
-                viewModel.processIntent(HomeIntent.FavoriteToggled(movieId, isFavorite))
-            })
-    }
-
-    private var previewType = PreviewType.GRID
+    private lateinit var moviesAdapter: MoviesLoadStateAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -55,36 +47,48 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupLoadStateAdapter()
+        observeUiStates()
+        observeUiEvents()
+        setupPreviewType()
+    }
+
+    private fun setupLoadStateAdapter() = with(binding) {
+        moviesAdapter = MoviesLoadStateAdapter(
+            onItemClicked = { viewModel.processIntent(HomeIntent.MovieClicked(it)) },
+            onFavoriteClicked = { movieId, isFavorite ->
+                viewModel.processIntent(HomeIntent.FavoriteToggled(movieId, isFavorite))
+            })
+
         moviesAdapter.addLoadStateListener { loadState ->
             viewModel.handleLoadStates(loadState, moviesAdapter.itemCount)
         }
 
-        binding.rvMovies.adapter = moviesAdapter
+        rvMovies.adapter = moviesAdapter
+        rvMovies.layoutManager = setupLayoutManager()
 
-        setupPreviewType()
-        setupLayoutManager()
-        observeUiStates()
-        observeUiEvents()
-    }
-
-    private fun setupPreviewType() = with(binding) {
-        icPreviewController.setOnClickListener {
-            viewModel.processIntent(HomeIntent.ToggleViewType)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.pagingDataFlow.collectLatest {
+                Log.d("HomeFragment", "new page collected: $it")
+                moviesAdapter.submitData(it)
+            }
         }
     }
 
-    private fun setupLayoutManager() = with(binding) {
-        rvMovies.layoutManager = if (previewType == PreviewType.GRID)
+    private fun setupLayoutManager(): RecyclerView.LayoutManager {
+        return if (viewModel.viewType == ViewType.Grid)
             GridLayoutManager(requireContext(), 2)
         else LinearLayoutManager(requireContext())
     }
 
-    private fun observeUiStates() = lifecycleScope.launch {
+    private fun observeUiStates() = viewLifecycleOwner.lifecycleScope.launch {
         repeatOnLifecycle(Lifecycle.State.STARTED) {
             viewModel.uiState.collectLatest { uiStates ->
+                Log.d("HomeFragment", "ui state changed : $uiStates")
                 when (uiStates) {
-                    is HomeUiStates.Loading -> {
+                    is HomeUiStates.LoadingRefresh -> {
                         binding.progressBar.isVisible = true
+                        binding.rvMovies.isVisible = false
                     }
 
                     is HomeUiStates.Empty -> {
@@ -93,8 +97,7 @@ class HomeFragment : Fragment() {
 
                     is HomeUiStates.Success -> {
                         binding.progressBar.isVisible = false
-                        moviesAdapter.submitData(uiStates.pagingData)
-
+                        binding.rvMovies.isVisible = true
                     }
 
                     is HomeUiStates.Error -> {
@@ -117,7 +120,9 @@ class HomeFragment : Fragment() {
                 when (event) {
                     is HomeUiEvent.NavigateToDetails -> {
                         val action =
-                            HomeFragmentDirections.actionMoviesListFragmentToMovieDetailsFragment(event.movieId)
+                            HomeFragmentDirections.actionMoviesListFragmentToMovieDetailsFragment(
+                                event.movieId
+                            )
                         findNavController().navigate(action)
                     }
 
@@ -129,20 +134,28 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun setupPreviewType() = with(binding) {
+        icPreviewController.setOnClickListener {
+            viewModel.processIntent(HomeIntent.ToggleViewType)
+        }
+    }
+
     private fun togglePreviewType() = with(binding) {
-        previewType = when (previewType) {
-            PreviewType.LIST -> PreviewType.GRID
-            PreviewType.GRID -> PreviewType.LIST
+        viewModel.viewType = when (viewModel.viewType) {
+            ViewType.List -> ViewType.Grid
+            ViewType.Grid -> ViewType.List
         }
 
         icPreviewController.setImageResource(
-            when (previewType) {
-                PreviewType.LIST -> R.drawable.ic_grid_view
-                PreviewType.GRID -> R.drawable.ic_list_view
+            when (viewModel.viewType) {
+                ViewType.List -> R.drawable.ic_grid_view
+                ViewType.Grid -> R.drawable.ic_list_view
             }
         )
 
-        setupLayoutManager()
-        moviesAdapter.notifyPreviewTypeChange(previewType)
+        moviesAdapter.refresh()
+        setupLoadStateAdapter()
+
     }
+
 }

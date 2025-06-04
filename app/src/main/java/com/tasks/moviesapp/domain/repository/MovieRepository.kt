@@ -2,7 +2,7 @@ package com.tasks.moviesapp.domain.repository
 
 import androidx.paging.PagingData
 import com.tasks.moviesapp.core.Resource
-import com.tasks.moviesapp.domain.model.MovieEntity
+import com.tasks.moviesapp.data.local.entity.MovieEntity
 import kotlinx.coroutines.flow.Flow
 
 interface MovieRepository {
